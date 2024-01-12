@@ -1,6 +1,10 @@
 name: Semver Action
 description: Checks SemVer version numbers and provides outputs for the various parts and next version numbers
 
+branding:
+  icon: hash
+  color: white
+
 inputs:
   version:
     type: string
