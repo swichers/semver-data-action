@@ -1,0 +1,141 @@
+name: Test
+
+on:
+  workflow_dispatch:
+
+
+jobs:
+  test:
+    name: Test ${{ matrix.version.version }}
+
+    strategy:
+      fail-fast: false
+
+      matrix:
+        version:
+          - version: 1.0.0
+            expected:
+              semver: 1.0.0
+              major: 1
+              minor: 0
+              patch: 0
+              isPreRelease: false
+              nextMajor: 2.0.0
+              nextMinor: 1.1.0
+              nextPatch: 1.0.1
+
+          - version: 1.1.3
+            expected:
+              semver: 1.1.3
+              major: 1
+              minor: 1
+              patch: 3
+              isPreRelease: false
+              nextMajor: 2.0.0
+              nextMinor: 1.2.0
+              nextPatch: 1.1.4
+
+          - version: 1.0.0-alpha.1
+            expected:
+              semver: 1.0.0-alpha.1
+              major: 1
+              minor: 0
+              patch: 0
+              isPreRelease: true
+              preRelease: '["alpha",1]'
+              preReleaseString: "alpha.1"
+              nextMajor: 1.0.0
+              nextMinor: 1.0.0
+              nextPatch: 1.0.0
+
+          - version: 2.0.0-beta.3
+            expected:
+              semver: 2.0.0-beta.3
+              major: 2
+              minor: 0
+              patch: 0
+              isPreRelease: true
+              preRelease: '["beta",3]'
+              preReleaseString: "beta.3"
+              nextMajor: 2.0.0
+              nextMinor: 2.0.0
+              nextPatch: 2.0.0
+
+          - version: 2.1.1-beta.0
+            expected:
+              semver: 2.1.1-beta.0
+              major: 2
+              minor: 1
+              patch: 1
+              isPreRelease: true
+              preRelease: '["beta",0]'
+              preReleaseString: "beta.0"
+              nextMajor: 3.0.0
+              nextMinor: 2.2.0
+              nextPatch: 2.1.1
+
+          - version: v1.6.19
+            expected:
+              semver: 1.6.19
+              major: 1
+              minor: 6
+              patch: 19
+              isPreRelease: false
+              nextMajor: 2.0.0
+              nextMinor: 1.7.0
+              nextPatch: 1.6.20
+
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Test version
+        id: test
+        uses: ./
+        with:
+          version: ${{ matrix.version.version }}
+
+      - name: Assert semver
+        run: |
+          test "${{ steps.test.outputs.semver }}" == "${{ matrix.version.expected.semver }}"
+
+      - name: Assert major
+        run: |
+          test "${{ steps.test.outputs.major }}" == "${{ matrix.version.expected.major }}"
+
+      - name: Assert minor
+        run: |
+          test "${{ steps.test.outputs.minor }}" == "${{ matrix.version.expected.minor }}"
+
+      - name: Assert patch
+        run: |
+          test "${{ steps.test.outputs.patch }}" == "${{ matrix.version.expected.patch }}"
+
+      - name: Assert isPreRelease
+        if: steps.test.outputs.isPreRelease == 'true'
+        run: |
+          test "${{ steps.test.outputs.isPreRelease }}" == "${{ matrix.version.expected.isPreRelease }}"
+
+      - name: Assert pre-release parts
+        if: steps.test.outputs.isPreRelease == 'true'
+        run: |
+          test "${{ steps.test.outputs.preRelease }}" == "${{ matrix.version.expected.preRelease }}"
+
+      - name: Assert pre-release string
+        if: steps.test.outputs.isPreRelease == 'true'
+        run: |
+          test "${{ steps.test.outputs.preReleaseString }}" == "${{ matrix.version.expected.preReleaseString }}"
+
+      - name: Assert next major
+        run: |
+          test "${{ steps.test.outputs.nextMajor }}" == "${{ matrix.version.expected.nextMajor }}"
+
+      - name: Assert next minor
+        run: |
+          test "${{ steps.test.outputs.nextMinor }}" == "${{ matrix.version.expected.nextMinor }}"
+
+      - name: Assert next patch
+        run: |
+          test "${{ steps.test.outputs.nextPatch }}" == "${{ matrix.version.expected.nextPatch }}"

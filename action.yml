@@ -1,0 +1,43 @@
+name: Semver Action
+description: Checks SemVer version numbers and provides outputs for the various parts and next version numbers
+
+inputs:
+  version:
+    type: string
+    required: true
+    description: The semver version number to perform the operations on
+
+outputs:
+  version:
+    description: The version that was passed in and validated as a semver, will not be present if validation failed
+
+  major:
+    description: The major version number
+
+  minor:
+    description: The minor version number
+
+  patch:
+    description: The patch version number
+
+  isPreRelease:
+    description: Whether the version provided is a pre-release version
+
+  preRelease:
+    description: The pre-release version parts as a JSON Array, e.g. ["alpha", "1"] for "-alpha.1". This will not be present if the version is not a pre-release version number
+
+  preReleaseString:
+    description: The pre-release version parts as a string, e.g. "alpha.1" for "-alpha.1". This will not be present if the version is not a pre-release version number
+
+  nexMajor:
+    description: The next major version number
+
+  nextMinor:
+    description: The next minor version number
+
+  nextPatch:
+    description: The next patch version number
+
+runs:
+  using: node20
+  main: dist/index.js
