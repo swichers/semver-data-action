@@ -1,4 +1,4 @@
-name: Semver Action
+name: SemVer Data Action
 description: Checks SemVer version numbers and provides outputs for the various parts and next version numbers
 
 branding:
