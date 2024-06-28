@@ -11,7 +11,7 @@ This includes parsing out the `major`, `minor`, `patch` and the pre release aspe
 
 ## Outputs
 
-* `version`: The parsed SemVer value
+* `semver`: The parsed SemVer value
 
 * `major`: The major part of the parsed SemVer, e.g. for version `1.2.3` it would return `1`
 
